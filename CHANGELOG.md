@@ -1,3 +1,7 @@
+## v1.4.0
+
+Real IT Asset Management: fleet-wide Patch Management and Software Inventory pages, Vulnerability Assessment promoted to primary navigation, plus a genuinely new Asset Register, Vendor & Contract tracking, and Reuse & Disposal workflow. Also fixes a significant client-side bug where every DELETE action across the whole product silently failed to show as successful even though it had actually worked.
+
 ## v1.3.0
 
 One-click 'Apply Update' now genuinely applies database migrations too, not just code - migrate is now a real, versioned, Watchtower-managed image (with a real code-level safety net in api/gateway so they never serve traffic against a stale schema). No more manual server access needed for a release that adds a migration.
