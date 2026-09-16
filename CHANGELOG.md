@@ -1,3 +1,7 @@
+## v1.4.1
+
+Fixes a real bug where the 'update available' banner (and its Apply Update button) rendered hidden behind the Dashboard landing page, making it invisible and unclickable for anyone whose console opens to the Dashboard on login.
+
 ## v1.4.0
 
 Real IT Asset Management: fleet-wide Patch Management and Software Inventory pages, Vulnerability Assessment promoted to primary navigation, plus a genuinely new Asset Register, Vendor & Contract tracking, and Reuse & Disposal workflow. Also fixes a significant client-side bug where every DELETE action across the whole product silently failed to show as successful even though it had actually worked.
