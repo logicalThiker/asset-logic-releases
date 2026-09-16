@@ -1,3 +1,7 @@
+## v1.4.2
+
+Added opt-in LICENSE_SYNC_URL background license sync: an on-prem server can now automatically pick up license changes from a vendor-controlled URL, with no manual file handoff needed.
+
 ## v1.4.1
 
 Fixes a real bug where the 'update available' banner (and its Apply Update button) rendered hidden behind the Dashboard landing page, making it invisible and unclickable for anyone whose console opens to the Dashboard on login.
