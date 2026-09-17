@@ -1,3 +1,7 @@
+## v1.4.8
+
+v1.4.8: Console redesigned to match the Spark Admin template (dark sidebar, lime accent, new card/table/button/badge system). Apply Update now shows real progress (spinner, live polling) and a post-update health check confirming api/database/gateway are all responding, with a specific warning naming what failed if not. Fixed the version-checker getting stuck for hours after a failed startup attempt - now retries every 2 minutes until it succeeds.
+
 ## v1.4.7
 
 v1.4.7: Fix vulnerability false positives (NVD keyword-search matches with no version range now file as Unconfirmed instead of Open forever, retroactive migration included) and add missing delete confirmations across 7 console actions (assets, maintenance log, custom fields, vendors, contracts, branding domain, SSO config, SCIM group mappings).
