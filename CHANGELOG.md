@@ -1,3 +1,7 @@
+## v1.4.3
+
+Asset Register rebuilt to full ICTMIS feature parity: stat cards, filters, a complete add/edit form (~45 fields), and a tabbed detail view (Overview/History/Maintenance/Audit) with assign, physical verification, and lifecycle/operational status tracking.
+
 ## v1.4.2
 
 Added opt-in LICENSE_SYNC_URL background license sync: an on-prem server can now automatically pick up license changes from a vendor-controlled URL, with no manual file handoff needed.
