@@ -1,3 +1,7 @@
+## v1.4.6
+
+SECURITY: local admin passwords were being stored and displayed in plaintext in the Run Script command history - fixed going forward and retroactively (existing exposed passwords in the database are now scrubbed). Also: device online/offline status is now computed server-side (fixes a real clock-skew bug that silently disabled Wake-on-LAN, Run Script, and on-demand Backup), a Details button on the Devices list, a one-click Add to Asset Register action, a disposed-asset badge fix, and Audit Log filters now support partial matches.
+
 ## v1.4.4
 
 Fixed a real stale-session gap (a reopened tab could fail silently for up to an hour) and Billing now shows real license status for on-prem customers instead of a subscription prompt.
