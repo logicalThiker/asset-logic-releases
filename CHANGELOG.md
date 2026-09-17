@@ -1,3 +1,7 @@
+## v1.4.4
+
+Fixed a real stale-session gap (a reopened tab could fail silently for up to an hour) and Billing now shows real license status for on-prem customers instead of a subscription prompt.
+
 ## v1.4.3
 
 Asset Register rebuilt to full ICTMIS feature parity: stat cards, filters, a complete add/edit form (~45 fields), and a tabbed detail view (Overview/History/Maintenance/Audit) with assign, physical verification, and lifecycle/operational status tracking.
