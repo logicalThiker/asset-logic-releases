@@ -1,0 +1,575 @@
+# The real on-prem "one command, everything bundled" deployment story -
+# postgres + api + gateway + console, wired together, real migrations
+# applied automatically. No Redis/NATS by default (matches this
+# project's own real-world scale story: an on-prem, single-instance
+# deployment genuinely doesn't need the multi-instance gateway routing
+# services/gateway/multiinstance.go adds - that's fully optional,
+# opt-in, and a no-op when unconfigured, exactly like it is outside
+# Docker too). Copy .env.example to .env and fill in real secrets
+# before running this for real - see that file's own comments for how.
+#
+# GATEWAY_INSECURE=true here is a deliberate, named choice, not a
+# silent security downgrade: this default assumes a real deployment
+# puts a real reverse proxy (nginx, Traefik, Caddy) in front of this
+# whole stack for actual external TLS termination - traffic between
+# these containers never leaves the private docker-compose network. A
+# deployment that wants TLS on the gateway's own gRPC listener directly
+# (e.g. agents connecting from outside this Docker host without a
+# reverse proxy in front) should mount a real cert/key pair and set
+# TLS_CERT_FILE/TLS_KEY_FILE instead - see the gateway service's own
+# commented-out real-TLS block below.
+# restart: unless-stopped on every long-running service below - a real,
+# previously-missing piece of "ready for production on your own
+# infrastructure," not just a demo that happens to survive one `up`. A
+# process crash or a host reboot brings the whole stack back on its own;
+# "unless-stopped" (not the blunter "always") specifically means a real,
+# deliberate `docker compose stop` still stays stopped, matching what an
+# operator actually expects - only a genuinely unexpected exit or a
+# fresh boot triggers the restart, not every future host reboot forcing
+# something you meant to leave off back on.
+#
+# logging: the same real json-file driver Docker already defaults to,
+# but bounded (10MB x 3 files per container) - unbounded log growth on
+# a real, long-running on-prem host is a genuine, if unglamorous,
+# production incident waiting to happen (a full disk taking down
+# Postgres with it), not something worth leaving to chance.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      POSTGRES_DB: assetlogic
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?set this in .env}
+    volumes:
+      # postgres:18+ images store data under a major-version-specific
+      # subdirectory of /var/lib/postgresql itself (for pg_ctlcluster/
+      # pg_upgrade compatibility) rather than directly under .../data
+      # like older postgres images did - mounting at .../data here
+      # (the old convention) makes the image refuse to start. Found
+      # live, on the very first `docker compose up`.
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d assetlogic"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Real bootstrap + every migration, in order (see docker/init-db.sh,
+  # now baked into this service's own image via Dockerfile.migrate - see
+  # that file's own header for why). api/gateway wait for it to exit 0
+  # before starting on a cold `docker compose up`. Compose re-evaluates
+  # this dependency on every such `up` (including `up -d <one other
+  # service>`), so this container genuinely does re-run against an
+  # already-initialized volume routinely, not just once - init-db.sh is
+  # idempotent for real (a schema_migrations tracking table)
+  # specifically so that's a harmless no-op rather than the hard failure
+  # it used to be. Found live: the very first `docker compose up -d api`
+  # after initial startup failed the whole stack before this was fixed.
+  #
+  # Now ALSO Watchtower-managed (com.centurylinklabs.watchtower.enable) -
+  # the real fix for a genuine gap in the one-click "Apply Update" story:
+  # a release that adds a new migration used to need someone with real
+  # server access to manually copy a new db/ folder onto the host and
+  # run `docker compose run --rm migrate` by hand, defeating the whole
+  # point of a one-click button. Now the new migration files ship INSIDE
+  # this versioned image instead of a host bind-mount, and the
+  # watchtower service's own WATCHTOWER_INCLUDE_STOPPED +
+  # WATCHTOWER_REVIVE_STOPPED settings below mean Watchtower pulls the
+  # new image and re-runs this already-exited container to completion,
+  # the same way it swaps a long-running service's image - genuinely
+  # safe to re-run any number of times (the same schema_migrations
+  # idempotency above).
+  #
+  # container_name is set explicitly (here and on api/gateway below) so
+  # the real, fixed name below is something Watchtower can match against
+  # regardless of what this install's own folder happens to be called -
+  # see api/gateway's own com.centurylinklabs.watchtower.depends-on
+  # label, which is what makes Watchtower update THIS container before
+  # touching api/gateway during a live one-click update (Watchtower
+  # updates independently-labeled containers with no ordering guarantee
+  # otherwise). Belt-and-suspenders, not the only defense: services/api's
+  # and services/gateway's own waitForSchemaReady (see their main.go)
+  # additionally blocks each of THOSE processes from serving real
+  # traffic until schema_migrations actually shows this build's own
+  # latest expected migration - real protection even if Watchtower's own
+  # update ordering doesn't land exactly as expected.
+  migrate:
+    image: ${IMAGE_REGISTRY:-ghcr.io/logicalthiker}/asset-logic-migrate:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    container_name: asset-logic-migrate
+    logging: *default-logging
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_SUPERUSER_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?set this in .env}
+      ASSETLOGIC_APP_PASSWORD: ${ASSETLOGIC_APP_PASSWORD:?set this in .env}
+
+  # Real, automated scheduling for docker/backup-postgres.sh's own real
+  # pg_dump - closes the "no automated scheduling" gap that script and
+  # compliance/business-continuity-plan.md both named directly. Writes
+  # to the SAME ./backups host directory backup-postgres.sh already
+  # defaults to (run manually, still works exactly as before) - both
+  # produce interchangeable dumps restore-postgres.sh can consume.
+  # Built from Dockerfile.backup - postgres:18-alpine (pg_dump ships in
+  # it) plus one compiled binary (cmd/upload-backup) for the optional
+  # real offsite-copy step below; otherwise unchanged from the plain
+  # upstream image this service used before.
+  backup:
+    image: ${IMAGE_REGISTRY:-ghcr.io/logicalthiker}/asset-logic-backup:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    container_name: asset-logic-backup
+    restart: unless-stopped
+    logging: *default-logging
+    # Scopes Watchtower (see the watchtower service below) to exactly
+    # this product's own 5 real services (api/gateway/console/backup/
+    # migrate) - it never touches postgres itself, and never touches
+    # anything else that might be running on this same Docker host.
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      # See migrate's own comment above for the full "why" - makes
+      # Watchtower re-run migrate to completion before recreating this
+      # container during a live one-click update, the same real
+      # ordering concern that already has its own dedicated comment on
+      # the depends_on block directly below.
+      com.centurylinklabs.watchtower.depends-on: "asset-logic-migrate"
+    depends_on:
+      # A real bug found on the very first live run: depending on
+      # postgres alone let this container's own real startup backup
+      # race migrate's schema/data setup, producing a genuinely
+      # near-empty (1614-byte) dump that correctly tripped its own
+      # size-sanity warning - not a false alarm, an accurately-detected
+      # real problem. Matches api/gateway's own existing dependency on
+      # migrate completing successfully first.
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      POSTGRES_SUPERUSER_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?set this in .env}
+      # Default: daily. Override for a tighter RPO, or to live-verify
+      # this on a short interval without waiting a real day.
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      # Real, opt-in offsite copy - closes business-continuity-plan.md's
+      # own named gap ("no offsite/durable copy of on-prem backups").
+      # Unset (the default): every backup stays exactly as local-disk-only
+      # as it always has been, zero behavior change. Set to "s3" or
+      # "azblob" plus that backend's own BACKUP_OFFSITE_* vars below to
+      # additionally push each real dump to a real bucket/container via
+      # cmd/upload-backup - see .env.example for the full set.
+      BACKUP_OFFSITE_BACKEND: ${BACKUP_OFFSITE_BACKEND:-}
+      BACKUP_OFFSITE_S3_BUCKET: ${BACKUP_OFFSITE_S3_BUCKET:-}
+      BACKUP_OFFSITE_S3_ENDPOINT: ${BACKUP_OFFSITE_S3_ENDPOINT:-}
+      BACKUP_OFFSITE_AZURE_CONTAINER: ${BACKUP_OFFSITE_AZURE_CONTAINER:-}
+      BACKUP_OFFSITE_AZURE_CONNECTION_STRING: ${BACKUP_OFFSITE_AZURE_CONNECTION_STRING:-}
+      BACKUP_OFFSITE_AZURE_ACCOUNT_URL: ${BACKUP_OFFSITE_AZURE_ACCOUNT_URL:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    volumes:
+      - ./backups:/backups
+      - ./docker/scheduled-backup.sh:/scheduled-backup.sh:ro
+    entrypoint: ["sh", "/scheduled-backup.sh"]
+
+  # Real, self-hosted AI backend for the AI-copilot/autonomous-remediation
+  # modules (both separately licensed - see pkg/license) - Ollama, an
+  # OpenAI-wire-compatible server, so services/api's own pkg/openai.Client
+  # needs zero code changes to talk to it. Deliberately gated behind the
+  # "ai" Compose profile (`docker compose --profile ai up -d`, or set
+  # COMPOSE_PROFILES=ai in .env) rather than always-on: unlike every other
+  # service in this file, this one has a real, non-trivial resource cost
+  # (a multi-GB model, real CPU load per completion) that a deployment
+  # with neither module licensed shouldn't pay for by default. Model
+  # persists in the ollama-data volume so a container restart/recreate
+  # never re-downloads it. No GPU passthrough configured here - CPU-only
+  # inference is genuinely slower (a real ~47s per completion was
+  # measured live on this project's own dev laptop) but works everywhere
+  # with zero extra host setup; a deployment with a real GPU can add a
+  # `deploy.resources.reservations.devices` block here (see Docker's own
+  # docs for the exact syntax, host-driver-dependent enough that this
+  # file doesn't guess at one default that would work on every host).
+  ollama:
+    image: ollama/ollama:latest
+    container_name: asset-logic-ollama
+    profiles: ["ai"]
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      # Real, live-found gap: the official ollama/ollama image ships with
+      # NO curl/wget at all ("executable file not found in $PATH"),
+      # despite that being the commonly-documented healthcheck for it -
+      # confirmed live, the server itself was already up and healthy
+      # ("Listening on [::]:11434") the whole time this was failing.
+      # `ollama list` is the one binary this image is guaranteed to
+      # have (it's the entrypoint itself) - a real, cheap way to confirm
+      # the server is actually answering requests, not just that the
+      # process exists.
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # One-shot model pull, the same real "init container that must
+  # complete before the thing that needs it is considered ready" idiom
+  # `migrate` above already established - `ollama/ollama`'s own image
+  # ships with NO model baked in, so a bare `docker compose --profile ai
+  # up -d` would otherwise leave `ollama` running but genuinely unable to
+  # answer a single real completion until someone manually ran `ollama
+  # pull` by hand. `${OLLAMA_MODEL:-llama3.2:3b}` matches this project's
+  # own live-verified default (services/api's own OPENAI_MODEL below) -
+  # override both together if a different model is wanted. Idempotent:
+  # `ollama pull` is a real no-op re-check against an already-pulled
+  # model, safe to re-run on every `up` the same way `migrate` already is.
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: asset-logic-ollama-pull
+    profiles: ["ai"]
+    logging: *default-logging
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["ollama", "pull", "${OLLAMA_MODEL:-llama3.2:3b}"]
+
+  api:
+    image: ${IMAGE_REGISTRY:-ghcr.io/logicalthiker}/asset-logic-api:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: asset-logic-api
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      # See migrate's own comment above for the full "why" - makes
+      # Watchtower re-run migrate to completion before recreating this
+      # container during a live one-click update. Belt-and-suspenders:
+      # this process ALSO refuses to serve real traffic until its own
+      # waitForSchemaReady (services/api/main.go) independently confirms
+      # the schema is actually current, regardless of how Watchtower's
+      # own ordering plays out.
+      com.centurylinklabs.watchtower.depends-on: "asset-logic-migrate"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgres://assetlogic_app:${ASSETLOGIC_APP_PASSWORD:?set this in .env}@postgres:5432/assetlogic?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?set this in .env}
+      SECRET_ENCRYPTION_KEY: ${SECRET_ENCRYPTION_KEY:-}
+      PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://localhost:8080}
+      REMOTE_DESKTOP_WS_BASE_URL: ${REMOTE_DESKTOP_WS_BASE_URL:-ws://localhost:9091}
+      # A real, live-found gap: PUBLIC_API_BASE_URL tells the CONSOLE
+      # where to send requests, but nothing told the API which browser
+      # origin to actually ACCEPT them from (see withCORS's own comment
+      # in services/api/main.go) - it silently defaulted to the Vite
+      # dev port (:5173), which never matches this compose stack's real
+      # console origin (:8081, whatever host). Every real deployment
+      # (not just cross-machine ones) hit a browser-blocked CORS
+      # failure at signup, surfacing as a generic "is the API running?"
+      # in the console - found live supporting a real first pilot
+      # client. Must be changed to this server's real address alongside
+      # the two lines above, same real port (8081) the console itself
+      # is served on.
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:8081}
+      DEPLOYMENT_MODE: ${DEPLOYMENT_MODE:-onprem}
+      # Real one-click "Apply Update" (see services/api/systemupdate.go's
+      # own header comment for the full design) - the SAME token as the
+      # watchtower service below's own WATCHTOWER_HTTP_API_TOKEN, so this
+      # container can make the real, authenticated internal call that
+      # triggers Watchtower's update cycle. Leaving this unset (the
+      # default) is a real, graceful no-op: the "Apply Update" button's
+      # own endpoint reports itself honestly unconfigured (503) rather
+      # than erroring, same posture as every other optional integration
+      # here.
+      WATCHTOWER_API_TOKEN: ${WATCHTOWER_API_TOKEN:-}
+      # LICENSE_KEY (the signed string directly, simplest for a cloud/
+      # container-orchestrated deployment) takes priority over
+      # LICENSE_FILE if both are set - see services/api/license.go's own
+      # loadLicenseBackend. Leaving both unset is a real, supported
+      # state (core module only), not an error.
+      LICENSE_KEY: ${LICENSE_KEY:-}
+      LICENSE_FILE: /license.txt
+      # Real, opt-in background license sync (see services/api/license.go's
+      # licenseSyncer) - when set, periodically re-fetches a license from
+      # a vendor-controlled URL and adopts it if genuinely different, so
+      # an on-prem instance can pick up a module/entitlement change with
+      # no manual LICENSE_FILE_HOST_PATH file handoff ever again. Left
+      # unset by default, same real no-op posture as every other optional
+      # integration in this block.
+      LICENSE_SYNC_URL: ${LICENSE_SYNC_URL:-}
+      LICENSE_SYNC_INTERVAL: ${LICENSE_SYNC_INTERVAL:-}
+      AGENT_RELEASES_DIR: /data/agent-releases
+      # Real, shared-across-replicas rate limiting when set (see
+      # pkg/ratelimit/redis.go) - genuinely optional here too: this
+      # compose stack is a single api instance, so the in-memory
+      # fallback is already correct without it. Left unset by default,
+      # same posture as REDIS_URL everywhere else in this project.
+      REDIS_URL: ${REDIS_URL:-}
+      # Real Razorpay billing (see pkg/billing, services/api/billing.go)
+      # - genuinely optional, same posture as every other integration
+      # here: leaving both unset makes every /api/v1/billing/* endpoint
+      # correctly report itself unconfigured rather than erroring.
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      # Real TLS directly on the api listener itself - genuinely optional
+      # (unlike GATEWAY_INSECURE above, api runs plain HTTP by default,
+      # unchanged), for a deployment reaching this api container directly
+      # from outside Docker with no reverse proxy in front. Uncomment and
+      # mount a real cert/key pair the same way as the gateway service's
+      # own commented-out block below:
+      # TLS_CERT_FILE: /certs/api-cert.pem
+      # TLS_KEY_FILE: /certs/api-key.pem
+      # Real remote-desktop session recording (see
+      # services/gateway/sessionrecording.go) - needs the SAME path
+      # mounted into BOTH api and gateway (the remote-desktop-recordings
+      # volume below, already declared in this service's own volumes:
+      # block), since gateway writes recordings and api serves them
+      # back to the console. Uncomment alongside the matching gateway
+      # block below to opt in; leaving it unset is a real, graceful
+      # no-op.
+      # RECORD_SESSIONS_DIR: /data/remote-desktop-recordings
+      # Self-hosted AI backend (see the ollama service above) for the
+      # ai-copilot/autonomous-remediation modules - OPENAI_BASE_URL
+      # already correctly points at the bundled ollama container's real
+      # Compose DNS name regardless of whether the "ai" profile is
+      # active, but OPENAI_API_KEY is the actual on/off switch (matching
+      # every other optional integration in this file): api.exe only
+      # enables its AI client when this is genuinely non-empty. To turn
+      # this on: set OPENAI_API_KEY (any non-empty value - Ollama itself
+      # doesn't check it) in .env AND run with the "ai" profile enabled,
+      # both steps deliberately required, never one silently implying
+      # the other. To point at a real cloud vendor INSTEAD of the
+      # bundled Ollama, override OPENAI_BASE_URL/OPENAI_MODEL/
+      # OPENAI_API_KEY in .env with that provider's own real values and
+      # skip the "ai" profile entirely - api.exe's own client is a plain
+      # OpenAI-wire-compatible HTTP client, it doesn't care which.
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-http://ollama:11434/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-llama3.2:3b}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # CPU-only inference is genuinely slower than a cloud API (a real
+      # ~47s per completion was measured live against this exact model)
+      # - 120s comfortably covers that with margin. Raise further for a
+      # larger model or a slower host; lower it back toward the client's
+      # own 30s default if pointed at a real, fast cloud vendor instead.
+      OPENAI_TIMEOUT_SECONDS: ${OPENAI_TIMEOUT_SECONDS:-120}
+    ports:
+      - "8080:8080"
+    volumes:
+      # A real bind mount, not a Docker-managed named volume - a real bug
+      # found live: a named volume starts genuinely EMPTY on first run
+      # regardless of what's sitting in this project's own agent-releases/
+      # folder (populated by scripts/publish-agent-release.ps1, or
+      # shipped pre-populated in an on-prem bundle), since Dockerfile.api
+      # never bakes any binaries into that path itself. The console's own
+      # "Download Agent" buttons read straight from here - a customer's
+      # very first agent download failed with "no published agent release
+      # for platform windows" even though a real binary + version.json
+      # sat right next to this very file, because the container could
+      # never actually see them. Defaults to this same directory
+      # (matching every on-prem bundle's own layout); override only for a
+      # non-standard host path.
+      - ${AGENT_RELEASES_HOST_PATH:-./agent-releases}:/data/agent-releases
+      - remote-desktop-recordings:/data/remote-desktop-recordings
+      - ${LICENSE_FILE_HOST_PATH:-./docker/no-license.txt}:/license.txt:ro
+    healthcheck:
+      # http, matching the plain-HTTP default above - switch to
+      # `--no-check-certificate https://localhost:8080/healthz` if the
+      # commented-out TLS_CERT_FILE/TLS_KEY_FILE block above gets enabled.
+      test: ["CMD", "wget", "-qO-", "--spider", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  gateway:
+    image: ${IMAGE_REGISTRY:-ghcr.io/logicalthiker}/asset-logic-gateway:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    container_name: asset-logic-gateway
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      # See migrate's own comment above (and api's own matching label)
+      # for the full "why".
+      com.centurylinklabs.watchtower.depends-on: "asset-logic-migrate"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgres://assetlogic_app:${ASSETLOGIC_APP_PASSWORD:?set this in .env}@postgres:5432/assetlogic?sslmode=disable
+      GATEWAY_INSECURE: "true" # see this file's own top comment for the real reasoning
+      # A real, live-found gap: without this, remote desktop's own
+      # browser<->gateway WebRTC connection gathers ICE candidates from
+      # this CONTAINER's own internal Docker network interface - never
+      # reachable from a real browser outside this host at all - and
+      # Docker has no way to forward the random ephemeral UDP port pion
+      # picks for it (there's no such thing as "publish every port").
+      # Every real session's SDP offer/answer exchange succeeds
+      # completely normally (it rides the already-working websocket
+      # signaling channel), but the actual media connection can never
+      # establish - ending with "timed out establishing the real-time
+      # connection" ~15s after consent, despite everything up to that
+      # point looking completely healthy. Set this to this SERVER's own
+      # real LAN IP/hostname (the exact same address already used for
+      # PUBLIC_API_BASE_URL/REMOTE_DESKTOP_WS_BASE_URL above) to fix it -
+      # found live supporting a real pilot client's first attempt at
+      # remote desktop through this exact Docker packaging.
+      GATEWAY_PUBLIC_IP: ${GATEWAY_PUBLIC_IP:-}
+      # Real TLS instead, for a deployment reaching this gateway directly
+      # from outside Docker with no reverse proxy in front - uncomment,
+      # remove GATEWAY_INSECURE above, and mount a real cert/key pair:
+      # TLS_CERT_FILE: /certs/gateway-cert.pem
+      # TLS_KEY_FILE: /certs/gateway-key.pem
+      # Real P2P (agent<->browser direct) remote desktop - see
+      # services/gateway/turnserver.go. TURN_PUBLIC_IP has to be this
+      # HOST's own real, routable address (not a container-internal
+      # one, since real agents/browsers outside this compose network
+      # need to reach it) - uncomment and set both to opt in; leaving
+      # them unset is a real, graceful fallback to the classic,
+      # fully gateway-relayed path. Also used as a fallback for
+      # GATEWAY_PUBLIC_IP above if that's left unset and this is
+      # already configured - the same real address either way.
+      # TURN_PUBLIC_IP: <this host's real public/routable IP>
+      # TURN_SHARED_SECRET: <a real random secret, e.g. `openssl rand -hex 32`>
+      # Real remote-desktop session recording - the gateway-side half,
+      # see the matching api service block above (both must be uncommented
+      # together, same path, real ffmpeg required - already bundled in
+      # this image, see Dockerfile.gateway).
+      # RECORD_SESSIONS_DIR: /data/remote-desktop-recordings
+      # Real hardware-change email notifications - see .env.example's own
+      # SMTP_* comment for the full "why"/graceful-degrade behavior.
+      # Deliberately only on the gateway, not the api container: this is
+      # where recordInventory (the real detection point) already runs.
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+      # The fixed, well-known UDP range remote desktop's own WebRTC media
+      # actually uses (see GATEWAY_PUBLIC_IP's own comment above) -
+      # WEBRTC_UDP_PORT_MIN/_MAX below to change it from this default.
+      - "40000-40099:40000-40099/udp"
+      # - "3478:3478/udp" # uncomment alongside TURN_PUBLIC_IP/TURN_SHARED_SECRET above
+    volumes:
+      - remote-desktop-recordings:/data/remote-desktop-recordings
+    healthcheck:
+      # The real /healthz route on the websocket port (services/gateway/
+      # remotedesktop.go) - the same one a real cloud load balancer's
+      # own target-group probe already relies on, reused here as this
+      # container's own liveness check rather than inventing a second
+      # mechanism. GATEWAY_INSECURE=true (this compose stack's own
+      # default) means plain http, not https, here.
+      test: ["CMD", "wget", "-qO-", "--spider", "http://localhost:9091/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  console:
+    image: ${IMAGE_REGISTRY:-ghcr.io/logicalthiker}/asset-logic-console:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile.console
+    container_name: asset-logic-console
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://localhost:8080}
+    ports:
+      - "8081:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "--spider", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Real one-click "Apply Update" mechanism - see
+  # services/api/systemupdate.go's own header comment for the full
+  # design and the disclosed, user-approved security trade-off
+  # (Watchtower's own container is the ONLY thing on this host that
+  # holds /var/run/docker.sock - never the api container itself).
+  # WATCHTOWER_LABEL_ENABLE=true means Watchtower only ever manages
+  # containers explicitly opted in via com.centurylinklabs.watchtower.
+  # enable=true above (api/gateway/console/backup/migrate) - postgres
+  # itself and anything else on this host are never touched. No host
+  # port published: the HTTP API is reachable only from inside this
+  # compose network (services/api's own real, authenticated internal
+  # call is the only real caller - never exposed to the internet or
+  # even this host's own LAN).
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_HTTP_API_UPDATE: "true"
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_API_TOKEN:?set this in .env to enable one-click Apply Update}
+      # Real image cleanup - without this, every applied update leaves
+      # the OLD image behind forever, a genuine, if slow, disk-space
+      # leak on a long-lived on-prem host.
+      WATCHTOWER_CLEANUP: "true"
+      # migrate (see its own comment above) is a one-shot container that
+      # already exited by the time any update runs - Watchtower ignores
+      # exited containers entirely by default. INCLUDE_STOPPED makes it
+      # consider migrate at all; REVIVE_STOPPED makes it actually re-run
+      # migrate (not just silently update its image metadata) once a new
+      # one is pulled - the real mechanism that makes a migration-adding
+      # release genuinely one-click instead of needing someone with real
+      # server access to run `docker compose run --rm migrate` by hand.
+      WATCHTOWER_INCLUDE_STOPPED: "true"
+      WATCHTOWER_REVIVE_STOPPED: "true"
+      # Watchtower's HTTP-API mode and its own background poll loop are
+      # NOT mutually exclusive - leaving the default 24h interval in
+      # place would mean Watchtower silently auto-applies an update on
+      # its own schedule too, contradicting this whole project's
+      # deliberate "notify, never auto-apply without a human clicking
+      # Apply" posture (see services/api/servercheck.go's own header
+      # comment). Set to effectively-never (~1 year) so the ONLY real
+      # trigger is the authenticated HTTP call services/api makes when
+      # an Owner/Admin actually clicks "Apply Update".
+      WATCHTOWER_POLL_INTERVAL: "31536000"
+      # A real, live-found compatibility gap: Watchtower's own bundled
+      # Docker client defaults to a very old API version (1.25) that a
+      # modern Docker Engine's daemon can outright refuse ("client
+      # version 1.25 is too old. Minimum supported API version is
+      # 1.40") - Watchtower then crash-loops forever, unable to reach
+      # the Docker socket it's otherwise correctly mounted. Forcing a
+      # real, modern version here (comfortably within range for any
+      # Docker Engine released in the last several years) fixes it -
+      # found live on a real client's Windows Server running a recent
+      # Docker Desktop release.
+      DOCKER_API_VERSION: "1.44"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  postgres-data:
+  remote-desktop-recordings:
+  ollama-data:

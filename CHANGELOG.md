@@ -1,3 +1,7 @@
+## v1.4.9
+
+Fix agent-releases Docker volume (bind mount, not named volume); auto-create default Client at signup; fix .dockerignore build-context bloat; add real Active Directory domain sync; bundle self-hosted AI (Ollama) into docker-compose.
+
 ## v1.4.8
 
 v1.4.8: Console redesigned to match the Spark Admin template (dark sidebar, lime accent, new card/table/button/badge system). Apply Update now shows real progress (spinner, live polling) and a post-update health check confirming api/database/gateway are all responding, with a specific warning naming what failed if not. Fixed the version-checker getting stuck for hours after a failed startup attempt - now retries every 2 minutes until it succeeds.
