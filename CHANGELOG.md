@@ -1,3 +1,7 @@
+## v1.5.5 (Windows server)
+
+Server 1.5.5 with agent 0.5.16. Domain Deploy (AD): the WMI deploy-credential list now loads when the screen opens (it was empty until the Deploy screen had been visited); relay and credential pickers show only the selected client's items; malformed OU paths (e.g. 'OU-IT' instead of 'OU=IT') are rejected before testing with the bad part named.
+
 ## v1.5.4 (Windows server)
 
 Domain Deploy (AD): only ACTIVE computer accounts get the agent - computers with no domain sign-in within the configured window (default 30 days) and disabled accounts are listed as Skipped and never deployed or added to inventory; a computer that signs in again is deployed on the next sync. Connection test shows active/inactive/disabled counts per OU; computers list shows activity, last sign-in and OS. Agent 0.5.15.
