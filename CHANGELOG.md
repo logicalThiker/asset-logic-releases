@@ -1,3 +1,7 @@
+## v1.5.2 (Windows server)
+
+Domain Deploy (AD): Test connection before linking (bind + every OU checked, per-OU computer counts; nothing syncs or deploys until the test passes), Edit and Remove for linked domains (fixes the remove error), clearer LDAPS hostname guidance. Check for updates in the profile menu; servers now check hourly. Agent 0.5.13.
+
 ## v1.5.1 (Windows server)
 
 Fixes: modules added after the original license (Domain Deploy / AD sync, Autonomous Remediation) now show in the console; no more false 'gateway unreachable' banner after an update on Windows servers.
