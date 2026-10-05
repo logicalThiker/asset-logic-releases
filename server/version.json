@@ -2,13 +2,13 @@
   "version": "1.4.9",
   "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
   "windows_native": {
-    "version": "1.5.3",
-    "url": "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.5.3/asset-logic-server-setup-1.5.3.exe",
-    "sha256": "492aa660cee6099ab8779288ec50d99b8f4f7671a42c3eb69dde4c5ac656f1dd",
-    "size": 166616983,
-    "signature": "h7nJnVXWkZZy83cl6QEqD5hYhfEb9yQLFXphMeqWEpMRQgp3KSMWVdZDERM2mxPWa1AHzgRx8pjQhRSXb7e9AA==",
+    "version": "1.5.4",
+    "url": "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.5.4/asset-logic-server-setup-1.5.4.exe",
+    "sha256": "6897aa35516d1036b1fc1b7eb6465dc3c04d044eb62535c9cc68c29ff37c506c",
+    "size": 166632348,
+    "signature": "VqlwVaBxmaKROyMhMAln8QV9wkdhS142whliloPQWJroJzGpNKwiuUd0lKLrwoDOSTed+KkldN970MHYvT3xBw==",
     "rollout_percent": 100,
     "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
-    "published_at": "2026-10-05T08:52:05Z"
+    "published_at": "2026-10-05T09:41:07Z"
   }
 }

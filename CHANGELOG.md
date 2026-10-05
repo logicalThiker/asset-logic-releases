@@ -1,3 +1,7 @@
+## v1.5.4 (Windows server)
+
+Domain Deploy (AD): only ACTIVE computer accounts get the agent - computers with no domain sign-in within the configured window (default 30 days) and disabled accounts are listed as Skipped and never deployed or added to inventory; a computer that signs in again is deployed on the next sync. Connection test shows active/inactive/disabled counts per OU; computers list shows activity, last sign-in and OS. Agent 0.5.15.
+
 ## v1.5.3 (Windows server)
 
 Domain Deploy (AD): connection tests and syncs can no longer hang - every LDAP step is time-limited and runs without blocking the relay's other commands; a test with no result now says whether the relay never picked it up or got stuck. Agent 0.5.14.
