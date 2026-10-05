@@ -1,3 +1,7 @@
+## v1.5.3 (Windows server)
+
+Domain Deploy (AD): connection tests and syncs can no longer hang - every LDAP step is time-limited and runs without blocking the relay's other commands; a test with no result now says whether the relay never picked it up or got stuck. Agent 0.5.14.
+
 ## v1.5.2 (Windows server)
 
 Domain Deploy (AD): Test connection before linking (bind + every OU checked, per-OU computer counts; nothing syncs or deploys until the test passes), Edit and Remove for linked domains (fixes the remove error), clearer LDAPS hostname guidance. Check for updates in the profile menu; servers now check hourly. Agent 0.5.13.
