@@ -1,3 +1,7 @@
+## v1.5.1 (Windows server)
+
+Fixes: modules added after the original license (Domain Deploy / AD sync, Autonomous Remediation) now show in the console; no more false 'gateway unreachable' banner after an update on Windows servers.
+
 ## v1.5.0 (Windows server)
 
 Security hardening: login lockout, 15-minute sessions with automatic renewal and real sign-out, one-time enrollment/credential tokens can't be reused, safer handling of remote command inputs (JIT admin, browser policy, self-service portal, zero-trust relay). Browser policy now keeps existing Group Policy entries. A replaced license file is picked up within a minute. Deploy page shows Active Directory domain deploy. Agent 0.5.11.
