@@ -1,3 +1,7 @@
+## v1.5.0 (Windows server)
+
+Security hardening: login lockout, 15-minute sessions with automatic renewal and real sign-out, one-time enrollment/credential tokens can't be reused, safer handling of remote command inputs (JIT admin, browser policy, self-service portal, zero-trust relay). Browser policy now keeps existing Group Policy entries. A replaced license file is picked up within a minute. Deploy page shows Active Directory domain deploy. Agent 0.5.11.
+
 ## v1.4.9
 
 Fix agent-releases Docker volume (bind mount, not named volume); auto-create default Client at signup; fix .dockerignore build-context bloat; add real Active Directory domain sync; bundle self-hosted AI (Ollama) into docker-compose.
