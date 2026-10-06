@@ -1,3 +1,7 @@
+## v1.5.7 (Windows server)
+
+Domain Deploy fix: computers no longer stuck at Deploy Queued - real deploy status tracking, no duplicate re-queuing, batched deploys (5 at a time, follow-up sync every 10 min), stale backlog cleared on upgrade, live status and failure reason per computer; agent 0.5.18 runs scripts without blocking syncs and connection tests.
+
 ## v1.5.6 (Windows server)
 
 Cloud Directory connector (Microsoft Entra ID device discovery + optional Intune agent deployment); Domain connection test limited to 1 minute with a Stop test button; agent 0.5.17 (shorter LDAP timeouts).
