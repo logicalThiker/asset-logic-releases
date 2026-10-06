@@ -1,3 +1,7 @@
+## v1.5.8 (Windows server)
+
+Agent install without WinRM: relay push now falls back from WinRM to WMI over DCOM to Task Scheduler over SMB; new Group Policy install option for domains (startup script, no inbound ports or admin credential needed).
+
 ## v1.5.7 (Windows server)
 
 Domain Deploy fix: computers no longer stuck at Deploy Queued - real deploy status tracking, no duplicate re-queuing, batched deploys (5 at a time, follow-up sync every 10 min), stale backlog cleared on upgrade, live status and failure reason per computer; agent 0.5.18 runs scripts without blocking syncs and connection tests.
