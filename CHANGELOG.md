@@ -1,3 +1,7 @@
+## v1.5.10 (Windows server)
+
+Fixes agent downloads returning 404 on native servers: the version-less agent name now serves the current release, so relay, Group Policy and Intune installs work again.
+
 ## v1.5.9 (Windows server)
 
 Deploy installer reports failures from the target computer; device action history paged (10 per page) with search and status filter; search and paging on every console list; AD Domain Deploy 'Install now' for chosen computers.
