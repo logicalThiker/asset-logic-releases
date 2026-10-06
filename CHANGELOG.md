@@ -1,3 +1,7 @@
+## v1.5.6 (Windows server)
+
+Cloud Directory connector (Microsoft Entra ID device discovery + optional Intune agent deployment); Domain connection test limited to 1 minute with a Stop test button; agent 0.5.17 (shorter LDAP timeouts).
+
 ## v1.5.5 (Windows server)
 
 Server 1.5.5 with agent 0.5.16. Domain Deploy (AD): the WMI deploy-credential list now loads when the screen opens (it was empty until the Deploy screen had been visited); relay and credential pickers show only the selected client's items; malformed OU paths (e.g. 'OU-IT' instead of 'OU=IT') are rejected before testing with the bad part named.
