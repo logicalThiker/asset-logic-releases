@@ -1,3 +1,7 @@
+## v1.5.11 (Windows server)
+
+Remote support: clicks now land correctly on a letterboxed remote screen, and the pointer is the normal arrow instead of a crosshair. Console: open panels no longer let the page behind show through the top bar.
+
 ## v1.5.10 (Windows server)
 
 Fixes agent downloads returning 404 on native servers: the version-less agent name now serves the current release, so relay, Group Policy and Intune installs work again.
