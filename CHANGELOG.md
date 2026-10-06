@@ -1,3 +1,7 @@
+## v1.5.9 (Windows server)
+
+Deploy installer reports failures from the target computer; device action history paged (10 per page) with search and status filter; search and paging on every console list; AD Domain Deploy 'Install now' for chosen computers.
+
 ## v1.5.8 (Windows server)
 
 Agent install without WinRM: relay push now falls back from WinRM to WMI over DCOM to Task Scheduler over SMB; new Group Policy install option for domains (startup script, no inbound ports or admin credential needed).
