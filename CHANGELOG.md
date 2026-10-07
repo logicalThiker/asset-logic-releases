@@ -1,3 +1,7 @@
+## v1.5.13 (Windows server)
+
+Remote desktop: eliminates minutes-behind lag by dropping stale frames on slow links (agent 0.5.20). Clicks/cursor now track correctly once a device updates to 0.5.20.
+
 ## v1.5.12 (Windows server)
 
 Remote support: clicks now land precisely, including on multi-monitor machines (agent 0.5.19). Earlier fixes (letterbox click mapping, normal cursor, agent download) carry forward.
