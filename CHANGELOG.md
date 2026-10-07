@@ -1,3 +1,7 @@
+## v1.5.14 (Windows server)
+
+Remote desktop overhaul (agent 0.5.21): sharp capture on scaled laptop displays, visible remote cursor, faster/lighter streaming, UAC prompts and lock screen visible, Ctrl+Alt+Del and Send keys menu, full screen, H.264 video on direct connections, recordings play at correct speed.
+
 ## v1.5.13 (Windows server)
 
 Remote desktop: eliminates minutes-behind lag by dropping stale frames on slow links (agent 0.5.20). Clicks/cursor now track correctly once a device updates to 0.5.20.
