@@ -1,3 +1,7 @@
+## v1.5.12 (Windows server)
+
+Remote support: clicks now land precisely, including on multi-monitor machines (agent 0.5.19). Earlier fixes (letterbox click mapping, normal cursor, agent download) carry forward.
+
 ## v1.5.11 (Windows server)
 
 Remote support: clicks now land correctly on a letterboxed remote screen, and the pointer is the normal arrow instead of a crosshair. Console: open panels no longer let the page behind show through the top bar.
