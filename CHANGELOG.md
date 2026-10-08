@@ -1,3 +1,17 @@
+## v1.6.0 (Windows server)
+
+Security and compliance release (ISO 27001 / GDPR remediation), plus editable server addresses.
+
+- Encrypted connections: new installs are TLS-only; upgrades run plain and TLS side by side (new ports 8443/8444/9443/9444) and agents move to TLS by themselves.
+- Server Addresses (Organization menu): set a private and a public address; agents try the private one first and fall back to the public one. No reinstall needed.
+- Agent 0.5.25: signed updates only, locked-down agent folders, server certificate pinning, private/public address fallback.
+- Accounts: new and reset users must change their password; login lockout per email and IP; site-level access enforced across all data; SCIM can't remove Owners.
+- Audit log is append-only with a tamper-evident hash chain; file transfers and commands are audited.
+- Device erase, data retention and per-user data export (GDPR).
+- Backups and session recordings are encrypted at rest.
+- DLP scanning is now opt-in.
+- HTTP hardening: request size limits, timeouts, security headers, console Content-Security-Policy, outbound request guard.
+
 ## v1.5.14 (Windows server)
 
 Remote desktop overhaul (agent 0.5.21): sharp capture on scaled laptop displays, visible remote cursor, faster/lighter streaming, UAC prompts and lock screen visible, Ctrl+Alt+Del and Send keys menu, full screen, H.264 video on direct connections, recordings play at correct speed.
