@@ -1,3 +1,7 @@
+## v1.6.2 (Windows server)
+
+The 'Confirm it's you' box now opens in the remote desktop window instead of behind it. Server addresses saved in the console are added to the server certificate automatically (no need to re-run setup).
+
 ## v1.6.1 (Windows server)
 
 Fixes agents that went offline after moving to encrypted connections in 1.6.0 (they reconnect by themselves after this update; agent 0.5.26). Adds encrypted nightly backups with a recovery key and weekly restore tests, two-factor sign-in (required for Owners and Admins by default) with confirmation before sensitive actions, emailed password reset, safer session storage, SSO domain proof and account linking, per-service accounts and tighter firewall rules, and security updates (Go 1.26.9).
