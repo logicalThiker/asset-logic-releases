@@ -1,3 +1,7 @@
+## v1.6.3 (Windows server)
+
+1.6.3: agents need only one public port (8443); portal agent download is now a normal Windows setup wizard and tries the private then public address; security fixes (Batches 8-11: security alerts and incident register, per-organisation AI setting, credential rotation, enrolment and session hardening, supply-chain controls). Agent 0.5.27.
+
 ## v1.6.2 (Windows server)
 
 The 'Confirm it's you' box now opens in the remote desktop window instead of behind it. Server addresses saved in the console are added to the server certificate automatically (no need to re-run setup).
