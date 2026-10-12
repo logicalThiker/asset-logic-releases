@@ -1,3 +1,7 @@
+## v1.6.5 (Windows server)
+
+1.6.5: the server's services run as native Windows services (NSSM removed); the secret-encryption key can be changed with setup -RotateSecretKey; licences accept rotated vendor keys; a signed agent setup stays signed with its download settings; the device Backup tab refreshes running backups; the update notice only offers newer versions. Agent 0.5.27 unchanged.
+
 ## v1.6.4 (Windows server)
 
 1.6.4: fixes 1.6.3, where the API refused requests passed on by the new single agent port (8443), so the console and agent update checks failed and the update rolled back. Agent 0.5.27 unchanged.
