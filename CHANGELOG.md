@@ -1,3 +1,7 @@
+## v1.6.4 (Windows server)
+
+1.6.4: fixes 1.6.3, where the API refused requests passed on by the new single agent port (8443), so the console and agent update checks failed and the update rolled back. Agent 0.5.27 unchanged.
+
 ## v1.6.3 (Windows server)
 
 1.6.3: agents need only one public port (8443); portal agent download is now a normal Windows setup wizard and tries the private then public address; security fixes (Batches 8-11: security alerts and incident register, per-organisation AI setting, credential rotation, enrolment and session hardening, supply-chain controls). Agent 0.5.27.
