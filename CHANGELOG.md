@@ -1,3 +1,7 @@
+## v1.6.8 (Windows server)
+
+Security hardening before the VAPT (another organisation's records answer 404; logout ends the session at once; stronger passwords; stricter console security headers) and the redesigned console: navigation rail with Ctrl+K search, device list with saved views and bulk actions, device health scores, a new home screen, device page summary with fixes, and a unified inbox.
+
 ## v1.6.7 (Windows server)
 
 Fixes server updates failing (exit 5 / rollback did not complete): the gateway crashed when its service was stopped, Windows restarted it and it locked its own files during the update. Setup now also handles the older gateway safely.
