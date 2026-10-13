@@ -1,3 +1,7 @@
+## v1.6.7 (Windows server)
+
+Fixes server updates failing (exit 5 / rollback did not complete): the gateway crashed when its service was stopped, Windows restarted it and it locked its own files during the update. Setup now also handles the older gateway safely.
+
 ## v1.6.6 (Windows server)
 
 1.6.6: licences update themselves - the server picks up a re-issued licence from the vendor automatically (no file to replace), and an all-modules licence covers modules added later; only strong TLS ciphers (AES-GCM/ChaCha20) and no HTTP TRACE on every port (pre-VAPT hardening). Agent 0.5.27 unchanged.
