@@ -1,3 +1,7 @@
+## v1.6.6 (Windows server)
+
+1.6.6: licences update themselves - the server picks up a re-issued licence from the vendor automatically (no file to replace), and an all-modules licence covers modules added later; only strong TLS ciphers (AES-GCM/ChaCha20) and no HTTP TRACE on every port (pre-VAPT hardening). Agent 0.5.27 unchanged.
+
 ## v1.6.5 (Windows server)
 
 1.6.5: the server's services run as native Windows services (NSSM removed); the secret-encryption key can be changed with setup -RotateSecretKey; licences accept rotated vendor keys; a signed agent setup stays signed with its download settings; the device Backup tab refreshes running backups; the update notice only offers newer versions. Agent 0.5.27 unchanged.
