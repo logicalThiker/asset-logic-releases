@@ -1,3 +1,7 @@
+## v1.7.0 (Windows server)
+
+Device Placement: rules (computer name, IP subnet, AD OU, domain, model, serial and more) move new devices from a common place to the right client and site on their first inventory report, with a preview and 'Run rules now'; devices can be moved between clients by hand. A re-installed or re-imaged machine is merged with its earlier record (history kept), so devices are never listed twice. Notifications: recipients choose events (device placed or unassigned, duplicate merged, hardware change, security alert) by email and/or SMS through Twilio or any HTTP SMS gateway (MSG91, TextLocal, ...), with a test button.
+
 ## v1.6.9 (Windows server)
 
 Settings from the console instead of config files: Server Settings (email with test email, TLS mode, sign-up, device key rotation, trusted proxies, remote-desktop relay, NVD/HIBP/AI keys, update window, off-site backups) applied by the server with automatic rollback; Certificates page to install your own TLS certificate (.pfx or PEM) for browsers while agents keep the built-in one; Branding logo upload and a primary/highlight colour theme. Remote desktop: live picture with much lower delay through the gateway, and the page layout is restored after a session ends.
