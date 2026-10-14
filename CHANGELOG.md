@@ -1,3 +1,7 @@
+## v1.7.1 (Windows server)
+
+Fleet patching: Patch Management lists every missing Windows and app update across a client or all clients; tick updates and install them on every device that needs them, now or at a scheduled time, with per-device progress and cancel. Vulnerability Assessment: 'Scan all devices' for a client or the whole organisation, in the background with progress. The navigation menu now opens beside the item clicked.
+
 ## v1.7.0 (Windows server)
 
 Device Placement: rules (computer name, IP subnet, AD OU, domain, model, serial and more) move new devices from a common place to the right client and site on their first inventory report, with a preview and 'Run rules now'; devices can be moved between clients by hand. A re-installed or re-imaged machine is merged with its earlier record (history kept), so devices are never listed twice. Notifications: recipients choose events (device placed or unassigned, duplicate merged, hardware change, security alert) by email and/or SMS through Twilio or any HTTP SMS gateway (MSG91, TextLocal, ...), with a test button.
