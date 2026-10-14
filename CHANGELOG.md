@@ -1,3 +1,7 @@
+## v1.6.9 (Windows server)
+
+Settings from the console instead of config files: Server Settings (email with test email, TLS mode, sign-up, device key rotation, trusted proxies, remote-desktop relay, NVD/HIBP/AI keys, update window, off-site backups) applied by the server with automatic rollback; Certificates page to install your own TLS certificate (.pfx or PEM) for browsers while agents keep the built-in one; Branding logo upload and a primary/highlight colour theme. Remote desktop: live picture with much lower delay through the gateway, and the page layout is restored after a session ends.
+
 ## v1.6.8 (Windows server)
 
 Security hardening before the VAPT (another organisation's records answer 404; logout ends the session at once; stronger passwords; stricter console security headers) and the redesigned console: navigation rail with Ctrl+K search, device list with saved views and bulk actions, device health scores, a new home screen, device page summary with fixes, and a unified inbox.
