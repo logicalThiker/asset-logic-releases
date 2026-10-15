@@ -1,3 +1,7 @@
+## v1.7.2 (Windows server)
+
+AI assistant: ask questions about your devices, updates, vulnerabilities and tickets, and have tasks prepared for you to confirm (patch installs now or scheduled, scans, restart/lock/wake, move device, run script, placement rules, notification recipients, user roles, tickets). Common commands are answered instantly without AI. New setting 'AI stays on this server' keeps all AI on this server; the optional Asset-Logic AI pack (separate download) adds a private, on-server AI.
+
 ## v1.7.1 (Windows server)
 
 Fleet patching: Patch Management lists every missing Windows and app update across a client or all clients; tick updates and install them on every device that needs them, now or at a scheduled time, with per-device progress and cancel. Vulnerability Assessment: 'Scan all devices' for a client or the whole organisation, in the background with progress. The navigation menu now opens beside the item clicked.
