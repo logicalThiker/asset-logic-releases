@@ -1,3 +1,7 @@
+## v1.7.3 (Windows server)
+
+Fleet patching fix: installs now run in the background on each device (no more cut-off installs and 'exit status 1'), each update is tried even if another fails, and results are clearer - 'already up to date' is not a failure, restarts needed are shown, error codes are readable and Windows Update connection problems are named. Re-run any deployment that failed.
+
 ## v1.7.2 (Windows server)
 
 AI assistant: ask questions about your devices, updates, vulnerabilities and tickets, and have tasks prepared for you to confirm (patch installs now or scheduled, scans, restart/lock/wake, move device, run script, placement rules, notification recipients, user roles, tickets). Common commands are answered instantly without AI. New setting 'AI stays on this server' keeps all AI on this server; the optional Asset-Logic AI pack (separate download) adds a private, on-server AI.
