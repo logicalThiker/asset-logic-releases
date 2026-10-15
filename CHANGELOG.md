@@ -1,3 +1,7 @@
+## v1.7.4 (Windows server)
+
+Agent 0.5.28: patch pushes and scripts you run can take longer than 2 minutes (patch pushes up to 60 minutes, scripts up to 30), and a script stopped at its limit now says so. Duplicate devices: a record whose agent never checked in is merged with the same computer, and all devices are checked for duplicates daily - press 'Merge duplicates now' (Settings > Device Placement) to clean up straight away.
+
 ## v1.7.3 (Windows server)
 
 Fleet patching fix: installs now run in the background on each device (no more cut-off installs and 'exit status 1'), each update is tried even if another fails, and results are clearer - 'already up to date' is not a failure, restarts needed are shown, error codes are readable and Windows Update connection problems are named. Re-run any deployment that failed.
