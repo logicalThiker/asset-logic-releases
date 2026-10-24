@@ -1,16 +1,16 @@
 {
-    "version":  "1.4.9",
-    "release_notes_url":  "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
-    "windows_native":  {
-                           "version":  "1.7.19",
-                           "url":  "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.7.19/asset-logic-server-setup-1.7.19.exe",
-                           "sha256":  "fe5e6956f0a2b61e54ab6e2a7731b93e06072a8da068b0c169fc6006fe2b6ad2",
-                           "size":  226814332,
-                           "signature":  "uwmDl9liQcW0EG4BWn3cOHfJEVgInGiRacKoEkTQdckIKQAmKN7YC1oG2D3eU6eSmRJJNQAQ1fd2Q1J3VJNcAQ==",
-                           "expires_at":  "2026-12-21T08:57:39Z",
-                           "freshness_signature":  "EEnTXjdMtxlp47CrhgmH6hqtg0zy0ReXF9xdi8jGsAQah2MeLYbOo1UN12NH5YwOewmFSELGE+smUffjU/C1Aw==",
-                           "rollout_percent":  100,
-                           "release_notes_url":  "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
-                           "published_at":  "2026-10-22T08:57:39Z"
-                       }
+  "version": "1.4.9",
+  "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
+  "windows_native": {
+    "version": "1.8.0",
+    "url": "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.8.0/asset-logic-server-setup-1.8.0.exe",
+    "sha256": "8a074d06dda39864bf38231e1616d5e53349aadd7ca639c08c952f4fc0ec3074",
+    "size": 253842872,
+    "signature": "kx0b1Xb7iQtWlpe6QEwRnxQuFLmFEWr3ww/o+3HdVfpnmdXElSPmrQxWWP3aVyHiLbZSWH+SkW0418gWl04pAg==",
+    "expires_at": "2026-12-23T14:38:28Z",
+    "freshness_signature": "4zIuOyAXE53ChrshOmPd0/cJLRAp9lFw1y8k0saz/WFCz+l1Vx98tSpYlUlkFMhYUHC86v+ENDFS8chCgaaVBw==",
+    "rollout_percent": 100,
+    "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
+    "published_at": "2026-10-24T14:38:29Z"
+  }
 }

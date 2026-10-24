@@ -1,3 +1,22 @@
+## v1.8.0 (Windows server)
+
+Security release (security roadmap 1-14), agent 0.5.39 for Windows, Linux and macOS.
+- Security posture checks and score per device and client
+- Microsoft Defender management, network isolation, EDR connectors (Defender for Endpoint, SentinelOne, CrowdStrike)
+- Security alerts by email, SMS, Teams, Slack; SIEM forwarding (syslog CEF/JSON)
+- Console IP allow-list, password re-check before remote sessions, scoped API tokens, agent tamper protection
+- Vulnerability matching by product identity (CPE); Linux CVEs from distribution advisories
+- CIS Level 1 baseline with fixes; NIST CSF 2.0, CIS v8, CERT-In, DPDP Act frameworks
+- BitLocker enforcement (key kept first, resumes after restart)
+- Unknown/unauthorized network device alerts and blocking; port, service and CVE scan of network devices
+- Fix & Verify: vulnerability -> approved fix -> rescan confirms
+- Just-in-time remote access approval; file transfer and clipboard per role
+- Linux security parity; first macOS agent
+- DLP finds Aadhaar and PAN (also in Word/Excel); Firefox history and extensions
+- SaaS and AI-tool allow/block policy enforced in Chrome, Edge and Firefox
+- SOC partner hand-off (separate licence module soc-partner)
+Fixes: Linux agents no longer self-update with the Windows build; secret-key rotation now covers all encrypted columns.
+
 ## v1.7.4 (Windows server)
 
 Agent 0.5.28: patch pushes and scripts you run can take longer than 2 minutes (patch pushes up to 60 minutes, scripts up to 30), and a script stopped at its limit now says so. Duplicate devices: a record whose agent never checked in is merged with the same computer, and all devices are checked for duplicates daily - press 'Merge duplicates now' (Settings > Device Placement) to clean up straight away.
