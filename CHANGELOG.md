@@ -1,3 +1,7 @@
+## v1.8.2 (Windows server)
+
+1.8.2 (agent 0.5.40): device geo location (Settings > Team > Device geo location: off by default, town from the network address, or precise Windows Location; Geo location column, device page with history and set-by-hand, Dashboard 'Where the devices are', 'device moved' alert). Hardware changes: no more false alerts for Wi-Fi/Ethernet MAC switching, randomized MACs or USB/external drives; existing false entries are acknowledged automatically with the reason.
+
 ## v1.8.1 (Windows server)
 
 Choose what the console calls a client: Settings > Branding > "Call clients": Clients (default) or Locations.
