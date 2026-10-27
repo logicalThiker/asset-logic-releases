@@ -1,3 +1,11 @@
+## v1.8.1 (Windows server)
+
+Choose what the console calls a client: Settings > Branding > "Call clients": Clients (default) or Locations.
+- In Locations mode every console label says location (All locations, Add location, reports, pickers, headings), and the asset register's buildings/floors/rooms are called areas.
+- The server says the same: error messages, alert emails, SMS, Teams and Slack messages, notification settings, custom-report columns, the inventory CSV heading and the AI assistant.
+- Data, API fields and licences are unchanged; organizations that keep Clients see no change.
+Agent stays 0.5.39.
+
 ## v1.8.0 (Windows server)
 
 Security release (security roadmap 1-14), agent 0.5.39 for Windows, Linux and macOS.
