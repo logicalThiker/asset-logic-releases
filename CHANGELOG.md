@@ -1,3 +1,7 @@
+## v1.8.3 (Windows server)
+
+1.8.3 (agent 0.5.41): agent deploys that keep working - the relay checks a computer is reachable before installing (clear reasons: offline, not in DNS, firewall, access denied); one row per computer, tried again by itself (offline computers every 30 min for 14 days), one-click Retry now; backup relays per domain connection and an alert when a relay goes offline; scripts lost when a relay reconnects are closed instead of staying 'Sent'; installs run in their own lane on the relay; Group Policy hint for laptops that keep not answering. Fixes pinned-certificate deploys.
+
 ## v1.8.2 (Windows server)
 
 1.8.2 (agent 0.5.40): device geo location (Settings > Team > Device geo location: off by default, town from the network address, or precise Windows Location; Geo location column, device page with history and set-by-hand, Dashboard 'Where the devices are', 'device moved' alert). Hardware changes: no more false alerts for Wi-Fi/Ethernet MAC switching, randomized MACs or USB/external drives; existing false entries are acknowledged automatically with the reason.
