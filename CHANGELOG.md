@@ -1,3 +1,7 @@
+## v1.8.4 (Windows server)
+
+1.8.4 (agent 0.5.42): billing and invoicing are for the product owner only - customers never see billing, invoices or subscription plans, whatever their licence. VPN adapters (Cisco AnyConnect, FortiClient) are no longer reported as a PC's own network address (Wake-on-LAN now targets the real adapter). Device Placement warns when rules exist but no common place is chosen.
+
 ## v1.8.3 (Windows server)
 
 1.8.3 (agent 0.5.41): agent deploys that keep working - the relay checks a computer is reachable before installing (clear reasons: offline, not in DNS, firewall, access denied); one row per computer, tried again by itself (offline computers every 30 min for 14 days), one-click Retry now; backup relays per domain connection and an alert when a relay goes offline; scripts lost when a relay reconnects are closed instead of staying 'Sent'; installs run in their own lane on the relay; Group Policy hint for laptops that keep not answering. Fixes pinned-certificate deploys.
