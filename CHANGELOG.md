@@ -1,3 +1,7 @@
+## v1.8.6 (Windows server)
+
+1.8.6: Application Control - block apps chosen from the installed-software list on every Windows edition (agent 0.5.43 stops them; AppLocker too on Enterprise/Education); drivers, runtimes, Windows and security software can never be blocked. Windows updates leave the vulnerability count within minutes after fleet patching. Uploaded logos now show (browser blocked them). Application Control easier to find in the Security menu.
+
 ## v1.8.5 (Windows server)
 
 1.8.5: clears the remaining false hardware changes from before 1.8.2 - USB drives with unusual names (General UDisk, VendorCo, Generic STORAGE DEVICE, Innostor, Seagate Basic, USB enclosures), drives plugged in and later removed, and Wi-Fi/Ethernet switches where the PC still has both adapters. Entries that could be real (a disk removed once, an adapter that is gone) stay for review. Agent unchanged (0.5.42).
