@@ -1,3 +1,7 @@
+## v1.8.5 (Windows server)
+
+1.8.5: clears the remaining false hardware changes from before 1.8.2 - USB drives with unusual names (General UDisk, VendorCo, Generic STORAGE DEVICE, Innostor, Seagate Basic, USB enclosures), drives plugged in and later removed, and Wi-Fi/Ethernet switches where the PC still has both adapters. Entries that could be real (a disk removed once, an adapter that is gone) stay for review. Agent unchanged (0.5.42).
+
 ## v1.8.4 (Windows server)
 
 1.8.4 (agent 0.5.42): billing and invoicing are for the product owner only - customers never see billing, invoices or subscription plans, whatever their licence. VPN adapters (Cisco AnyConnect, FortiClient) are no longer reported as a PC's own network address (Wake-on-LAN now targets the real adapter). Device Placement warns when rules exist but no common place is chosen.
