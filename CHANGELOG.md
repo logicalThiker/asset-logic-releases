@@ -1,3 +1,7 @@
+## v1.8.7 (Windows server)
+
+DPDP (India Digital Personal Data Protection Act 2023 + Rules 2025) compliance module (licence module dpdp): record of processing, notices in English and Eighth Schedule languages, consent with a tamper-evident ledger and receipts, verified guardian consent for children, Fourth Schedule exemptions and Third Schedule classes from the Gazette text, rights requests and grievances, breaches with the 72-hour report, erasure with the Rule 8(3) one-year retention, policies, training, assessments, Government requests, Board matters, CSV import, evidence pack, and a public privacy page at /privacy/<slug> served through the console. Migration 0193. No agent change.
+
 ## v1.8.6 (Windows server)
 
 1.8.6: Application Control - block apps chosen from the installed-software list on every Windows edition (agent 0.5.43 stops them; AppLocker too on Enterprise/Education); drivers, runtimes, Windows and security software can never be blocked. Windows updates leave the vulnerability count within minutes after fleet patching. Uploaded logos now show (browser blocked them). Application Control easier to find in the Security menu.
