@@ -1,3 +1,7 @@
+## v1.8.9 (Windows server)
+
+1.8.9 (agent 0.5.45): BitLocker organization setting with per-client on/off, OS disk encrypted first and unlocking automatically, auto-unlock turned on for data drives encrypted without it, block writing to unencrypted USB drives (migration 0196); Online/Offline device views and clickable Command Center counts; winget fixed when it can't start as SYSTEM (newest working copy, VCLibs on PATH, VC++ runtime; migration 0195); old per-user and machine-wide app copies removed after patching; 'Install the latest X for everyone' for apps winget can't update; Store/MSIX packages installed for all users; fleet patching catalog-script exit fix; multi-line Run script box.
+
 ## v1.8.8 (Windows server)
 
 Reliability release (agent 0.5.44). Updates never leave the server down: setup waits for a slow PostgreSQL and starts every service again on any failure; the updater's rollback can't be blocked by a locked file and starts the services as a last resort. A failed winget update now shows as Failed with the reason (it was retried and reported as done); migration 0194 fixes the patch catalog scripts. Windows update and driver installs from the device page work (drivers were never found; KB searches were rejected by Windows Update), with a rescan afterwards and a new Hide button for drivers Windows keeps offering. Agent 0.5.44: script results survive a dropped connection (no more false 'Not finished'), and an old Add/Remove Programs entry no longer hides an updated app (old CVEs stayed open).
