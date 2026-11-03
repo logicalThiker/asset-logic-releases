@@ -1,3 +1,7 @@
+## v1.8.8 (Windows server)
+
+Reliability release (agent 0.5.44). Updates never leave the server down: setup waits for a slow PostgreSQL and starts every service again on any failure; the updater's rollback can't be blocked by a locked file and starts the services as a last resort. A failed winget update now shows as Failed with the reason (it was retried and reported as done); migration 0194 fixes the patch catalog scripts. Windows update and driver installs from the device page work (drivers were never found; KB searches were rejected by Windows Update), with a rescan afterwards and a new Hide button for drivers Windows keeps offering. Agent 0.5.44: script results survive a dropped connection (no more false 'Not finished'), and an old Add/Remove Programs entry no longer hides an updated app (old CVEs stayed open).
+
 ## v1.8.7 (Windows server)
 
 DPDP (India Digital Personal Data Protection Act 2023 + Rules 2025) compliance module (licence module dpdp): record of processing, notices in English and Eighth Schedule languages, consent with a tamper-evident ledger and receipts, verified guardian consent for children, Fourth Schedule exemptions and Third Schedule classes from the Gazette text, rights requests and grievances, breaches with the 72-hour report, erasure with the Rule 8(3) one-year retention, policies, training, assessments, Government requests, Board matters, CSV import, evidence pack, and a public privacy page at /privacy/<slug> served through the console. Migration 0193. No agent change.
