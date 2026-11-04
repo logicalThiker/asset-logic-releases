@@ -1,3 +1,7 @@
+## v1.8.11 (Windows server)
+
+1.8.11: Invoice units link to their PCs with complete details. A linked asset fills in host name, MAC, OS and site from the PC. Serial numbers compare without hyphens; likely misreads are suggested for a person to confirm. Each unit on an invoice shows its status, serial numbers can be typed or scanned on delivery, and a PC can be chosen by hand. A unit whose PC reports from another location can be moved there by an Owner or Admin. What the invoice said is kept, and PCs with less than was purchased are reported. A second invoice for a serial number is noted in its history (migration 0198; no agent change).
+
 ## v1.8.10 (Windows server)
 
 1.8.10 (agent 0.5.46): Automatic fixing of critical and high vulnerabilities, per client or site (off until an Owner or Admin turns it on; migration 0197). Plan fixes much faster on large organizations. Fix & Verify shows finished fixes, explains itself, Plan fix on each vulnerability. Patch runs report vulnerabilities removed and still open. Findings no update can clear are marked. A browser updated but not relaunched waits instead of showing Fixed, with the relaunch prompt for automatic fixes. Patch Catalog redesigned: one compact list, added status, computers per app, bulk add, no duplicates. Lost SNMP polls and port scans are closed on reconnect.
