@@ -1,3 +1,7 @@
+## v1.8.10 (Windows server)
+
+1.8.10 (agent 0.5.46): Automatic fixing of critical and high vulnerabilities, per client or site (off until an Owner or Admin turns it on; migration 0197). Plan fixes much faster on large organizations. Fix & Verify shows finished fixes, explains itself, Plan fix on each vulnerability. Patch runs report vulnerabilities removed and still open. Findings no update can clear are marked. A browser updated but not relaunched waits instead of showing Fixed, with the relaunch prompt for automatic fixes. Patch Catalog redesigned: one compact list, added status, computers per app, bulk add, no duplicates. Lost SNMP polls and port scans are closed on reconnect.
+
 ## v1.8.9 (Windows server)
 
 1.8.9 (agent 0.5.45): BitLocker organization setting with per-client on/off, OS disk encrypted first and unlocking automatically, auto-unlock turned on for data drives encrypted without it, block writing to unencrypted USB drives (migration 0196); Online/Offline device views and clickable Command Center counts; winget fixed when it can't start as SYSTEM (newest working copy, VCLibs on PATH, VC++ runtime; migration 0195); old per-user and machine-wide app copies removed after patching; 'Install the latest X for everyone' for apps winget can't update; Store/MSIX packages installed for all users; fleet patching catalog-script exit fix; multi-line Run script box.
