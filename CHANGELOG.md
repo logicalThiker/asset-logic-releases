@@ -1,3 +1,7 @@
+## v1.8.12 (Windows server)
+
+1.8.12 (agent 0.5.47): Much less traffic between computers and the server. Agents send their full inventory only when something changed (a tiny report otherwise, a full one at least daily), and their traffic is compressed. A new agent version reaches all computers over 12 hours instead of at once, and downloads compressed (about 19 MB instead of 36 MB); Update agent now still works at once. Also: an old copy of an app whose own uninstaller fails is removed when that is provably safe (VLC 0.9.8a). No database migration.
+
 ## v1.8.11 (Windows server)
 
 1.8.11: Invoice units link to their PCs with complete details. A linked asset fills in host name, MAC, OS and site from the PC. Serial numbers compare without hyphens; likely misreads are suggested for a person to confirm. Each unit on an invoice shows its status, serial numbers can be typed or scanned on delivery, and a PC can be chosen by hand. A unit whose PC reports from another location can be moved there by an Owner or Admin. What the invoice said is kept, and PCs with less than was purchased are reported. A second invoice for a serial number is noted in its history (migration 0198; no agent change).
