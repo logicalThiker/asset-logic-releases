@@ -1,3 +1,7 @@
+## v1.8.13 (Windows server)
+
+1.8.13 (agent 0.5.47, migration 0199): CIS Controls v7.1 in Compliance for SOS (licence module cis-v71). Each location is checked against its implementation group (IG1 project locations, IG2 the National Office) and scored 0-5 like SOS's own workbook (rating = total / 5 x applicable); 64 sub-controls are measured from the agents' data, the rest scored by a person with comments, owner, review period and evidence files. Import SOS's workbook with its history since 2022, record dated assessments, export in the workbook's layout. Mail domains' SPF and DMARC are checked over public DNS.
+
 ## v1.8.12 (Windows server)
 
 1.8.12 (agent 0.5.47): Much less traffic between computers and the server. Agents send their full inventory only when something changed (a tiny report otherwise, a full one at least daily), and their traffic is compressed. A new agent version reaches all computers over 12 hours instead of at once, and downloads compressed (about 19 MB instead of 36 MB); Update agent now still works at once. Also: an old copy of an app whose own uninstaller fails is removed when that is provably safe (VLC 0.9.8a). No database migration.
