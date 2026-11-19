@@ -1,3 +1,7 @@
+## v1.8.14 (Windows server)
+
+1.8.14 (agent 0.5.48, no migration): act on threat alerts from the portal - Remove threats (Microsoft Defender on the computer, through the agent), Quick/Full scan, and Remove threat through the EDR the alert came from (SentinelOne remediates; Defender for Endpoint quarantines the alert's files or scans; technicians too). Console Back button and browser Back; a click on a page's background no longer closes it. CIS v7.1: OS (3.4) and software (3.5) patching checks agree - the agent's Windows updates are named, a location without computers is not applicable.
+
 ## v1.8.13 (Windows server)
 
 1.8.13 (agent 0.5.47, migration 0199): CIS Controls v7.1 in Compliance for SOS (licence module cis-v71). Each location is checked against its implementation group (IG1 project locations, IG2 the National Office) and scored 0-5 like SOS's own workbook (rating = total / 5 x applicable); 64 sub-controls are measured from the agents' data, the rest scored by a person with comments, owner, review period and evidence files. Import SOS's workbook with its history since 2022, record dated assessments, export in the workbook's layout. Mail domains' SPF and DMARC are checked over public DNS.

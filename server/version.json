@@ -1,16 +1,16 @@
 {
-  "version": "1.4.9",
-  "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
-  "windows_native": {
-    "version": "1.8.13",
-    "url": "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.8.13/asset-logic-server-setup-1.8.13.exe",
-    "sha256": "fbf159cfb7b84a84e8eac861344597c07e3085b377787eca0bc597ef5e39e73c",
-    "size": 281312586,
-    "signature": "MV8bDeSjFTFUjphbe8qroSX/zau4QN2H0esyastwn+SnuHBIW2F1kwM/SFFMJnCmKecBw3JnufUD2R4hCs3wDw==",
-    "expires_at": "2027-01-17T07:09:36Z",
-    "freshness_signature": "9zlugIp/uinWar10uSs0IgEJvTFAdXT1Oo2OWsrMJyJzKhe8cC4uAhwUyELKo9M9TqI4KU8GYi0UKuhjdC//Dg==",
-    "rollout_percent": 100,
-    "release_notes_url": "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
-    "published_at": "2026-11-18T07:09:37Z"
-  }
+    "version":  "1.4.9",
+    "release_notes_url":  "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
+    "windows_native":  {
+                           "version":  "1.8.14",
+                           "url":  "https://github.com/logicalThiker/asset-logic-releases/releases/download/server-windows-v1.8.14/asset-logic-server-setup-1.8.14.exe",
+                           "sha256":  "47d178a5df11c50d7ac2f31024e14a290e4df8cc9480a8862e47f3fd7416ee78",
+                           "size":  281388060,
+                           "signature":  "R9Ax/pZukOhqf0gaDxzJuuBm2XVzPRSYEjyfWMPip1yrVWXC7a1laxSbuQEy/iviupav3hqIOniJgJJoIEZgAQ==",
+                           "expires_at":  "2027-01-18T08:30:08Z",
+                           "freshness_signature":  "7SUckfIvNGx2q4bg8L2jajA0WaiOSrU6u4/k+zqgtAtlkTh52+838OSw29oEu9p5AeKX/iCu5ZCvy039BufbCw==",
+                           "rollout_percent":  100,
+                           "release_notes_url":  "https://github.com/logicalThiker/asset-logic-releases/blob/main/CHANGELOG.md",
+                           "published_at":  "2026-11-19T08:30:09Z"
+                       }
 }
